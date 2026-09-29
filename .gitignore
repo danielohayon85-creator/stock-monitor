@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+stock_monitor.db
+sp500_universe.json
+.env

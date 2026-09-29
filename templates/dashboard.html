@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניטור מניות — הזדמנויות רווח מהיר</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div id="loginView" class="login-wrap">
+    <form class="login-card" id="loginForm">
+      <div class="login-icon">📈</div>
+      <h1>ניטור מניות</h1>
+      <p class="sub">איתותי הזדמנות לרווח מהיר · S&amp;P 500</p>
+      <input id="password" type="password" placeholder="סיסמה" autocomplete="current-password" required>
+      <button type="submit">כניסה</button>
+      <div id="loginError" class="err"></div>
+    </form>
+  </div>
+
+  <div id="appView" class="hidden">
+    <header class="topbar">
+      <div class="brand"><span class="brand-logo">📈</span>ניטור מניות · הזדמנויות רווח מהיר</div>
+      <div class="market-pill" id="marketPill">בודק שוק…</div>
+      <div class="user-box">
+        <button id="refreshBtn" class="link">רענון</button>
+        <button id="logoutBtn" class="link">יציאה</button>
+      </div>
+    </header>
+
+    <main id="content">
+      <div class="disclaimer">⚠️ כלי סיגנלים/מחקר בלבד — לא ייעוץ השקעות ואינו מהווה הצעה לרכישה/מכירה. כל החלטת מסחר היא באחריותכם המלאה.</div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">איתותים היום</div>
+          <div class="stat-value" id="statSignalsToday">–</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">סריקה אחרונה</div>
+          <div class="stat-value small" id="statLastScan">–</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">מניות נסקרו</div>
+          <div class="stat-value" id="statTickersScanned">–</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">התראות טלגרם</div>
+          <div class="stat-value small" id="statTelegram">–</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>איתותים אחרונים</h2>
+        <div class="table-wrap">
+          <table id="signalsTable">
+            <thead>
+              <tr>
+                <th>שעה</th><th>טיקר</th><th>ציון</th><th>מחיר</th><th>מומנטום</th>
+                <th>נפח יחסי</th><th>RSI</th><th>סטופ</th><th>יעד</th><th>טלגרם</th>
+              </tr>
+            </thead>
+            <tbody id="signalsBody"></tbody>
+          </table>
+          <div id="signalsEmpty" class="empty hidden">אין איתותים עדיין. הסריקה רצה כל 15 דקות בשעות המסחר.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>יומן סריקות</h2>
+        <div class="table-wrap">
+          <table id="scansTable">
+            <thead><tr><th>התחלה</th><th>סטטוס</th><th>נסקרו</th><th>נמצאו נתונים</th><th>איתותים</th></tr></thead>
+            <tbody id="scansBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

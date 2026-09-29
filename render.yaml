@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: stock-monitor
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --timeout 300 --workers 1
+    disk:
+      name: stock-monitor-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATA_DIR
+        value: /var/data
+      - key: DASHBOARD_PASSWORD    # סיסמת הכניסה לדשבורד — קבע ערך משלך ב-Render
+        sync: false
+      - key: CRON_TOKEN            # טוקן להפעלת /api/scan מקרון חיצוני
+        generateValue: true
+      - key: APP_URL
+        value: https://stock-monitor.onrender.com   # עדכן לכתובת האמיתית שרנדר ייתן לשירות
+      # --- טלגרם: אופציונלי. ריק = מושבת, הדשבורד עובד רגיל. ראו README.md ---
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+
+  # --- קרון: מפעיל סריקה כל 15 דק' בחלון שמכיל את שעות המסחר האמריקאיות
+  #     (13:00-21:59 UTC מכסה גם EDT וגם EST) — הסקריפט עצמו בודק אם השוק
+  #     פתוח בפועל ומדלג אם לא, כך שאין סיכון להתראות מיותרות. ---
+  - type: cron
+    name: stock-monitor-scan
+    runtime: python
+    plan: starter
+    schedule: "*/15 13-21 * * 1-5"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python cron_scan.py
+    envVars:
+      - key: APP_URL
+        value: https://stock-monitor.onrender.com   # עדכן לכתובת האמיתית שרנדר ייתן לשירות
+      - key: CRON_TOKEN
+        fromService:
+          type: web
+          name: stock-monitor
+          envVarKey: CRON_TOKEN
